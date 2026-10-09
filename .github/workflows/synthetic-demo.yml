@@ -1,0 +1,42 @@
+name: Synthetic demo verification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DEMO_MODE: "true"
+      DATABASE_URL: ${{ format('file:{0}/prisma/portfolio-demo.sqlite', github.workspace) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install dependencies / generate Prisma client
+        run: npm ci
+      - name: Test fictional fixture generation
+        run: npm run test:demo
+      - name: Create an isolated, untracked demo database
+        run: npm run demo:prepare
+      - name: Verify sample record counts
+        run: npm run demo:verify
+      - name: ESLint
+        run: npm run lint
+      - name: Production build under demo mode
+        run: npm run build
+      - name: Smoke-test built Next.js dashboard and both practice modes
+        run: node scripts/smoke-demo.mjs
+      - name: Verify demo stayed unchanged after HTTP access
+        run: npm run demo:verify
+      - name: Assert original databases were not modified
+        run: git diff --exit-code -- dev.db prisma/dev.db

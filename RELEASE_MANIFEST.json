@@ -1,0 +1,20 @@
+{
+  "release": "oposicion-consorcio-synthetic-demo-v1",
+  "import_type": "fresh-git-history",
+  "source_release": {
+    "github_actions_run": "https://github.com/Maria79/oposicion-consorcio/actions/runs/37971805698",
+    "artifact_id": 11636576176,
+    "source_archive_sha256": "7ce777582a8f7730d2b12ad94b373b9925200225b473d317836d65f0851df35d",
+    "source_manifest_sha256": "5321223fd17131a9865e8f1b030b8a080efa199da3a369038c1db14cc25f2241"
+  },
+  "clean_source_file_count": 43,
+  "privacy": {
+    "original_git_history_included": false,
+    "personal_sqlite_databases_included": false,
+    "syllabus_pdfs_included": false,
+    "source_study_markdown_included": false,
+    "sample_questions": "400 fictional deterministic examples",
+    "sample_attempts": "3 synthetic histories"
+  },
+  "notes": "Provenance for clean initial import. Original verified ZIP also contains a per-file SHA256 manifest; this repository file records the verified archive digests rather than reproducing that manifest."
+}

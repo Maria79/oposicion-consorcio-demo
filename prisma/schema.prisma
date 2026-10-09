@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+// prisma\schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Tema {
+  id          Int      @id @default(autoincrement())
+  numero      Int      @unique
+  titulo      String
+  descripcion String
+  tipo        String
+  pdfUrl      String
+  markdownPath String?   
+  contenido   String?
+  resumen     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  preguntas   Pregunta[]
+  intentos    Intento[]
+}
+
+model Pregunta {
+  id          String   @id @default(cuid())
+  temaId      Int
+  tema        Tema     @relation(fields: [temaId], references: [id])
+
+  enunciado   String
+  opcionA     String
+  opcionB     String
+  opcionC     String
+  correcta    String
+
+  explicacion String?
+  articulo    String?
+  concepto    String?
+  fingerprint String?
+
+  dificultad  String   @default("MEDIA")
+  tipo        String   @default("TEST")
+  generadaIA  Boolean  @default(true)
+  flagMal     Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+
+  intentos    PreguntaIntento[]
+
+  @@index([temaId])
+  @@index([dificultad])
+  @@index([concepto])
+  @@unique([temaId, fingerprint])
+}
+
+model PreguntaIntento {
+  id          String   @id @default(cuid())
+
+  intentoId   String
+  intento     Intento  @relation(fields: [intentoId], references: [id], onDelete: Cascade)
+
+  preguntaId String
+  pregunta   Pregunta @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
+
+  respuesta  String?
+  correcta   Boolean
+  enBlanco   Boolean  @default(false)
+
+  createdAt  DateTime @default(now())
+
+  @@index([intentoId])
+  @@index([preguntaId])
+  @@unique([intentoId, preguntaId])
+}
+
+model Intento {
+  id              String   @id @default(cuid())
+  temaId          Int
+  tema            Tema     @relation(fields: [temaId], references: [id])
+
+  tipo            String
+  modo            String
+
+  totalPreguntas  Int
+  correctas       Int
+  incorrectas     Int
+  enBlanco        Int
+  puntuacion      Float
+  tiempoSegundos  Int
+  respuestas      String
+
+  createdAt       DateTime @default(now())
+
+  preguntas       PreguntaIntento[]
+
+  @@index([temaId])
+  @@index([createdAt])
+}
